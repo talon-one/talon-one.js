@@ -1,0 +1,19 @@
+{
+  "name": "talon-one",
+  "version": "1.0.0",
+  "description": "JavaScript client for Talon.One API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/talon-one/talon-one.js.git"
+  },
+  "author": "Stephen Sugden <me@stephensugden.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/talon-one/talon-one.js/issues"
+  },
+  "homepage": "https://github.com/talon-one/talon-one.js#readme"
+}
