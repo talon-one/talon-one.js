@@ -2,18 +2,19 @@ var url = require('url')
 var https = require('https')
 var crypto = require('crypto')
 
-exports.createClient = Client
+exports.createIntegrationClient = Client
   
 /**
  * Create an HTTP client that will handle signing requests for the integration API
  *
+ * @class
  * @param {string} baseUrl The root URL for requests, e.g. https://mycompany.talon.one
  * @param {number|string} shopId The ID of the shop sending the request.
  * @param {string} shopKey The hexadecimal API key for the shop sending the request.
  */
-function Client (baseUrl, shopId, shopKey) {
-  if (!(this instanceof Client)) {
-    return new Client(baseUrl, shopId, shopKey)
+function IntegrationClient (baseUrl, shopId, shopKey) {
+  if (!(this instanceof IntegrationClient)) {
+    return new IntegrationClient(baseUrl, shopId, shopKey)
   }
 
   this.defaults = url.parse(baseUrl)
@@ -29,7 +30,7 @@ function Client (baseUrl, shopId, shopKey) {
  * @param {Object} updates an object containing session properties to update
  * @see {@link https://mycompany.talon.one/docs/api/#operation--v1-customer_sessions--customerSessionId--put}
  */
-Client.prototype.updateCustomerSession = function (sessionId, updates, callback) {
+IntegrationClient.prototype.updateCustomerSession = function (sessionId, updates, callback) {
   return this.request('PUT', '/v1/customer_sessions/' + sessionId, updates, callback)
 }
 
@@ -40,7 +41,7 @@ Client.prototype.updateCustomerSession = function (sessionId, updates, callback)
  * @param {Object} updates an object containing profile properties to update
  * @see {@link https://mycompany.talon.one/docs/api/#operation--v1-customer_profiles--integrationId--put}
  */
-Client.prototype.updateCustomerProfile = function (customerId, updates, callback) {
+IntegrationClient.prototype.updateCustomerProfile = function (customerId, updates, callback) {
   return this.request('PUT', '/v1/customer_profiles/' + customerId, updates, callback)
 }
 
@@ -51,11 +52,11 @@ Client.prototype.updateCustomerProfile = function (customerId, updates, callback
  * @param {Object} updates an object containing profile properties to update
  * @see {@link https://mycompany.talon.one/docs/api/#operation--v1-events-post}
  */
-Client.prototype.trackEvent = function (sessionId, eventType, eventData, callback) {
+IntegrationClient.prototype.trackEvent = function (sessionId, eventType, eventData, callback) {
   return this.request('POST', '/v1/events', {sessionId: sessionId, type: eventType, value: eventData}, callback)
 }
 
-Client.prototype.request = function (method, path, payload, callback) {
+IntegrationClient.prototype.request = function (method, path, payload, callback) {
   var req = https.request({
     method: method,
     host: this.defaults.host,
