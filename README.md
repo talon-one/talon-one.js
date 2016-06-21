@@ -1,4 +1,4 @@
-# talon-one.js - client for the Talon.One Integration API
+# talon-one - client for Talon.One Integration API
 
 ## Synopsis
 
