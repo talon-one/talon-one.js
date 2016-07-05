@@ -2,7 +2,7 @@ var url = require('url')
 var https = require('https')
 var crypto = require('crypto')
 
-exports.createIntegrationClient = Client
+exports.createIntegrationClient = IntegrationClient
   
 /**
  * Create an HTTP client that will handle signing requests for the integration API
