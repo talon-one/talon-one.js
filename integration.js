@@ -1,4 +1,5 @@
 var url = require('url')
+var http = require('http')
 var https = require('https')
 var crypto = require('crypto')
 
@@ -57,9 +58,11 @@ IntegrationClient.prototype.trackEvent = function (sessionId, eventType, eventDa
 }
 
 IntegrationClient.prototype.request = function (method, path, payload, callback) {
-  var req = https.request({
+  var impl = this.defaults.protocol == "http:" ? http : https
+  var req = impl.request({
     method: method,
-    host: this.defaults.host,
+    port: this.defaults.port,
+    hostname: this.defaults.hostname,
     path: this.defaults.pathname + path,
   })
 
