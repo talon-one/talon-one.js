@@ -9,18 +9,18 @@ exports.createIntegrationClient = IntegrationClient
  *
  * @class
  * @param {string} baseUrl The root URL for requests, e.g. https://mycompany.talon.one
- * @param {number|string} shopId The ID of the shop sending the request.
- * @param {string} shopKey The hexadecimal API key for the shop sending the request.
+ * @param {number|string} applicationId The ID of the application sending the request.
+ * @param {string} applicationKey The hexadecimal API key for the application sending the request.
  */
-function IntegrationClient (baseUrl, shopId, shopKey) {
+function IntegrationClient (baseUrl, applicationId, applicationKey) {
   if (!(this instanceof IntegrationClient)) {
-    return new IntegrationClient(baseUrl, shopId, shopKey)
+    return new IntegrationClient(baseUrl, applicationId, applicationKey)
   }
 
   this.defaults = url.parse(baseUrl)
   this.defaults.pathname = this.defaults.pathname.replace(/\/$/, '')
-  this.shopId = shopId
-  this.hmacKey = new Buffer(shopKey, 'hex')
+  this.applicationId = applicationId
+  this.hmacKey = new Buffer(applicationKey, 'hex')
 }
 
 /**
@@ -70,7 +70,7 @@ IntegrationClient.prototype.request = function (method, path, payload, callback)
     hmac.end()
     var signature = hmac.read().toString('hex')
     req.setHeader('Content-Type', 'application/json')
-    req.setHeader('Content-Signature', 'signer=' + this.shopId + '; signature=' + signature)
+    req.setHeader('Content-Signature', 'signer=' + this.applicationId + '; signature=' + signature)
     req.write(buff)
   }
 

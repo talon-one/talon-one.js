@@ -5,10 +5,10 @@
 ```javascript
 var TalonOne = require('talon-one')
 
-var shopId = 15025
-var shopKey = '41d3f05e76fd667b'
+var applicationId = 15025
+var applicationKey = '41d3f05e76fd667b'
 
-var client = new TalonOne.IntegrationClient('https://mycompany.talon.one', shopId, shopKey)
+var client = new TalonOne.IntegrationClient('https://mycompany.talon.one', applicationId, applicationKey)
 
 var customerId = 'id-used-by-my-company'
 
@@ -49,22 +49,22 @@ client.trackEvent(sessionId, 'mycompany-reached-goal', {
 **Kind**: global class  
 
 * [IntegrationClient](#IntegrationClient)
-    * [new IntegrationClient(baseUrl, shopId, shopKey)](#new_IntegrationClient_new)
+    * [new IntegrationClient(baseUrl, applicationId, applicationKey)](#new_IntegrationClient_new)
     * [.updateCustomerSession(sessionId, updates)](#IntegrationClient+updateCustomerSession)
     * [.updateCustomerProfile(customerId, updates)](#IntegrationClient+updateCustomerProfile)
     * [.trackEvent(sessionId, updates)](#IntegrationClient+trackEvent)
 
 <a name="new_IntegrationClient_new"></a>
 
-### new IntegrationClient(baseUrl, shopId, shopKey)
+### new IntegrationClient(baseUrl, applicationId, applicationKey)
 Create an HTTP client that will handle signing requests for the integration API
 
 
 | Param | Type | Description |
 | --- | --- | --- |
 | baseUrl | <code>string</code> | The root URL for requests, e.g. https://mycompany.talon.one |
-| shopId | <code>number</code> &#124; <code>string</code> | The ID of the shop sending the request. |
-| shopKey | <code>string</code> | The hexadecimal API key for the shop sending the request. |
+| applicationId | <code>number</code> &#124; <code>string</code> | The ID of the application sending the request. |
+| applicationKey | <code>string</code> | The hexadecimal API key for the application sending the request. |
 
 <a name="IntegrationClient+updateCustomerSession"></a>
 
