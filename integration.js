@@ -29,7 +29,7 @@ function IntegrationClient (baseUrl, applicationId, applicationKey) {
  *
  * @param {string} sessionId The integration ID of the customer
  * @param {Object} updates an object containing session properties to update
- * @see {@link https://mycompany.talon.one/docs/api/#operation--v1-customer_sessions--customerSessionId--put}
+ * @see {@link http://developers.talon.one/integration-api/reference/#updateCustomerSession}
  */
 IntegrationClient.prototype.updateCustomerSession = function (sessionId, updates, callback) {
   return this.request('PUT', '/v1/customer_sessions/' + sessionId, updates, callback)
@@ -40,7 +40,7 @@ IntegrationClient.prototype.updateCustomerSession = function (sessionId, updates
  *
  * @param {string} customerId The integration ID of the customer
  * @param {Object} updates an object containing profile properties to update
- * @see {@link https://mycompany.talon.one/docs/api/#operation--v1-customer_profiles--integrationId--put}
+ * @see {@link http://developers.talon.one/integration-api/reference/#updateCustomerProfile}
  */
 IntegrationClient.prototype.updateCustomerProfile = function (customerId, updates, callback) {
   return this.request('PUT', '/v1/customer_profiles/' + customerId, updates, callback)
@@ -51,7 +51,7 @@ IntegrationClient.prototype.updateCustomerProfile = function (customerId, update
  *
  * @param {string} sessionId The integration ID of the customer
  * @param {Object} updates an object containing profile properties to update
- * @see {@link https://mycompany.talon.one/docs/api/#operation--v1-events-post}
+ * @see {@link http://developers.talon.one/integration-api/reference/#trackEvent}
  */
 IntegrationClient.prototype.trackEvent = function (sessionId, eventType, eventData, callback) {
   return this.request('POST', '/v1/events', {sessionId: sessionId, type: eventType, value: eventData}, callback)
