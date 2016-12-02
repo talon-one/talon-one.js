@@ -1,19 +1,63 @@
+/**
+ * @module talon-one/integration
+ */
+
 var url = require('url')
 var http = require('http')
 var https = require('https')
 var crypto = require('crypto')
 
-exports.createIntegrationClient = IntegrationClient
-  
+exports.Client = IntegrationClient
+exports.createClient = IntegrationClient
+exports.handleEffect = registerEffectHandler
+
+var globalEffectHandlers = {}
+
+/**
+ * Register a global effect handler. This handler will be called whenever a
+ * matching effect is returned by the API, with it's first argument being the
+ * `context` value of the client that performed the request. See the API docs on
+ * handling effects to see which handlers should be registered and what their
+ * remaining arguments will be.
+ *
+ * @alias module:talon-one/integration.handleEffect
+ * @param {string} effectName The name of the effect to handle.
+ * @param {Function} handler The handler callback.
+ * @see {@link http://developers.talon.one/integration-api/handling-effects/}
+ */
+function registerEffectHandler(effectName, handler) {
+  globalEffectHandlers[effectName] = handler
+}
+
+function handleEffects (client, response, callback) {
+  try {
+    response.event.effects.forEach(function (effect) {
+      var call = effect[3]
+      var effectName = call[0]
+      var handler
+      if ((handler = self._effectHandlers[effectName])) {
+        var effectArgs = call.slice(1)
+        effectArgs.unshift(client.context)
+        handler.apply(null, effectArgs)
+      }
+    })
+    callback(null, response)
+  } catch (error) {
+    callback(error)
+  }
+}
+
 /**
  * Create an HTTP client that will handle signing requests for the integration API
  *
  * @class
+ * @alias module:talon-one/integration.Client
  * @param {string} baseUrl The root URL for requests, e.g. https://mycompany.talon.one
  * @param {number|string} applicationId The ID of the application sending the request.
  * @param {string} applicationKey The hexadecimal API key for the application sending the request.
+ * @param {object} context Data specific to this client instance that will be passed to global effect handlers.
  */
-function IntegrationClient (baseUrl, applicationId, applicationKey) {
+function IntegrationClient (baseUrl, applicationId, applicationKey, context) {
   if (!(this instanceof IntegrationClient)) {
     return new IntegrationClient(baseUrl, applicationId, applicationKey)
   }
@@ -22,6 +66,7 @@ function IntegrationClient (baseUrl, applicationId, applicationKey) {
   this.defaults.pathname = this.defaults.pathname.replace(/\/$/, '')
   this.applicationId = applicationId
   this.hmacKey = new Buffer(applicationKey, 'hex')
+  this.context = context || {}
 }
 
 /**
@@ -79,6 +124,7 @@ IntegrationClient.prototype.request = function (method, path, payload, callback)
 
   req.end()
 
+  var self = this
   var buffs = []
   req.on('error', callback)
   req.on('response', function (res) {
@@ -97,7 +143,7 @@ IntegrationClient.prototype.request = function (method, path, payload, callback)
         callback(new Error('Received non-JSON response: ' + buff))
       }
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        callback(null, data)
+        handleEffects(self, data, callback)
       } else {
         var err = new Error(data.message)
         err.statusCode = res.statusCode

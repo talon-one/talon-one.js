@@ -45,18 +45,32 @@ client.trackEvent(sessionId, 'mycompany-reached-goal', {
 
 # API
 
-## IntegrationClient
-**Kind**: global class  
+<a name="module_talon-one/integration"></a>
 
-* [IntegrationClient](#IntegrationClient)
-    * [new IntegrationClient(baseUrl, applicationId, applicationKey)](#new_IntegrationClient_new)
-    * [.updateCustomerSession(sessionId, updates)](#IntegrationClient+updateCustomerSession)
-    * [.updateCustomerProfile(customerId, updates)](#IntegrationClient+updateCustomerProfile)
-    * [.trackEvent(sessionId, updates)](#IntegrationClient+trackEvent)
+## talon-one/integration
 
-<a name="new_IntegrationClient_new"></a>
+* [talon-one/integration](#module_talon-one/integration)
+    * [.Client](#module_talon-one/integration.Client)
+        * [new IntegrationClient(baseUrl, applicationId, applicationKey, context)](#new_module_talon-one/integration.Client_new)
+        * [.updateCustomerSession(sessionId, updates)](#module_talon-one/integration.Client+updateCustomerSession)
+        * [.updateCustomerProfile(customerId, updates)](#module_talon-one/integration.Client+updateCustomerProfile)
+        * [.trackEvent(sessionId, updates)](#module_talon-one/integration.Client+trackEvent)
+    * [.handleEffect(effectName, handler)](#module_talon-one/integration.handleEffect)
 
-### new IntegrationClient(baseUrl, applicationId, applicationKey)
+<a name="module_talon-one/integration.Client"></a>
+
+### talon-one/integration.Client
+**Kind**: static class of <code>[talon-one/integration](#module_talon-one/integration)</code>  
+
+* [.Client](#module_talon-one/integration.Client)
+    * [new IntegrationClient(baseUrl, applicationId, applicationKey, context)](#new_module_talon-one/integration.Client_new)
+    * [.updateCustomerSession(sessionId, updates)](#module_talon-one/integration.Client+updateCustomerSession)
+    * [.updateCustomerProfile(customerId, updates)](#module_talon-one/integration.Client+updateCustomerProfile)
+    * [.trackEvent(sessionId, updates)](#module_talon-one/integration.Client+trackEvent)
+
+<a name="new_module_talon-one/integration.Client_new"></a>
+
+#### new IntegrationClient(baseUrl, applicationId, applicationKey, context)
 Create an HTTP client that will handle signing requests for the integration API
 
 
@@ -65,43 +79,61 @@ Create an HTTP client that will handle signing requests for the integration API
 | baseUrl | <code>string</code> | The root URL for requests, e.g. https://mycompany.talon.one |
 | applicationId | <code>number</code> &#124; <code>string</code> | The ID of the application sending the request. |
 | applicationKey | <code>string</code> | The hexadecimal API key for the application sending the request. |
+| context | <code>object</code> | Data specific to this client instance that will be passed to global effect handlers. |
 
-<a name="IntegrationClient+updateCustomerSession"></a>
+<a name="module_talon-one/integration.Client+updateCustomerSession"></a>
 
-### integrationClient.updateCustomerSession(sessionId, updates)
+#### client.updateCustomerSession(sessionId, updates)
 Update/create a customer session.
 
-**Kind**: instance method of <code>[IntegrationClient](#IntegrationClient)</code>  
-**See**: [https://mycompany.talon.one/docs/api/#operation--v1-customer_sessions--customerSessionId--put](https://mycompany.talon.one/docs/api/#operation--v1-customer_sessions--customerSessionId--put)  
+**Kind**: instance method of <code>[Client](#module_talon-one/integration.Client)</code>  
+**See**: [http://developers.talon.one/integration-api/reference/#updateCustomerSession](http://developers.talon.one/integration-api/reference/#updateCustomerSession)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | sessionId | <code>string</code> | The integration ID of the customer |
 | updates | <code>Object</code> | an object containing session properties to update |
 
-<a name="IntegrationClient+updateCustomerProfile"></a>
+<a name="module_talon-one/integration.Client+updateCustomerProfile"></a>
 
-### integrationClient.updateCustomerProfile(customerId, updates)
+#### client.updateCustomerProfile(customerId, updates)
 Update/create a customer profile
 
-**Kind**: instance method of <code>[IntegrationClient](#IntegrationClient)</code>  
-**See**: [https://mycompany.talon.one/docs/api/#operation--v1-customer_profiles--integrationId--put](https://mycompany.talon.one/docs/api/#operation--v1-customer_profiles--integrationId--put)  
+**Kind**: instance method of <code>[Client](#module_talon-one/integration.Client)</code>  
+**See**: [http://developers.talon.one/integration-api/reference/#updateCustomerProfile](http://developers.talon.one/integration-api/reference/#updateCustomerProfile)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | customerId | <code>string</code> | The integration ID of the customer |
 | updates | <code>Object</code> | an object containing profile properties to update |
 
-<a name="IntegrationClient+trackEvent"></a>
+<a name="module_talon-one/integration.Client+trackEvent"></a>
 
-### integrationClient.trackEvent(sessionId, updates)
+#### client.trackEvent(sessionId, updates)
 Track a custom event
 
-**Kind**: instance method of <code>[IntegrationClient](#IntegrationClient)</code>  
-**See**: [https://mycompany.talon.one/docs/api/#operation--v1-events-post](https://mycompany.talon.one/docs/api/#operation--v1-events-post)  
+**Kind**: instance method of <code>[Client](#module_talon-one/integration.Client)</code>  
+**See**: [http://developers.talon.one/integration-api/reference/#trackEvent](http://developers.talon.one/integration-api/reference/#trackEvent)  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | sessionId | <code>string</code> | The integration ID of the customer |
 | updates | <code>Object</code> | an object containing profile properties to update |
+
+<a name="module_talon-one/integration.handleEffect"></a>
+
+### talon-one/integration.handleEffect(effectName, handler)
+Register a global effect handler. This handler will be called whenever a
+matching effect is returned by the API, with it's first argument being the
+`context` value of the client that performed the request. See the API docs on
+handling effects to see which handlers should be registered and what their
+remaining arguments will be.
+
+**Kind**: static method of <code>[talon-one/integration](#module_talon-one/integration)</code>  
+**See**: [http://developers.talon.one/integration-api/handling-effects/](http://developers.talon.one/integration-api/handling-effects/)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| effectName | <code>string</code> | The name of the effect to handle. |
+| handler | <code>function</code> | The handler callback. |
 
