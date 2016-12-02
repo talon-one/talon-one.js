@@ -1,1 +1,1 @@
-exports.IntegrationClient = require('./integration.js')
+exports.IntegrationClient = require('./integration.js').Client
