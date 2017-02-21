@@ -13,6 +13,12 @@ exports.handleEffect = registerEffectHandler
 
 var globalEffectHandlers = {}
 
+const API_CUSTOMER_SESSIONS_PATH        = '/v1/customer_sessions/'
+const API_CUSTOMER_PROFILES_PATH        = '/v1/customer_profiles/'
+const API_EVENTS_PATH                   = '/v1/events'
+const API_REFERRALS_PATH                = '/v1/referrals'
+const API_CUSTOMER_PROFILES_SEARCH_PATH = '/v1/customer_profiles_search'
+
 /**
  * Register a global effect handler. This handler will be called whenever a
  * matching effect is returned by the API, with it's first argument being the
@@ -47,6 +53,12 @@ function handleEffects (client, response, callback) {
   }
 }
 
+function effectsCallback(client, callback) {
+  return function(error, response) {
+    (error) ? callback(error) : handleEffects(client, response, callback)
+  }
+}
+
 /**
  * Create an HTTP client that will handle signing requests for the integration API
  *
@@ -72,34 +84,73 @@ function IntegrationClient (baseUrl, applicationId, applicationKey, context) {
 /**
  * Update/create a customer session.
  *
- * @param {string} sessionId The integration ID of the customer
+ * @param {string} sessionId: The integration ID of the customer session
  * @param {Object} updates an object containing session properties to update
  * @see {@link http://developers.talon.one/integration-api/reference/#updateCustomerSession}
  */
 IntegrationClient.prototype.updateCustomerSession = function (sessionId, updates, callback) {
-  return this.request('PUT', '/v1/customer_sessions/' + sessionId, updates, callback)
+  return this.request('PUT', API_CUSTOMER_SESSIONS_PATH + sessionId, updates, effectsCallback(this, callback))
 }
 
 /**
  * Update/create a customer profile
  *
- * @param {string} customerId The integration ID of the customer
+ * @param {string} customerId: The integration ID of the customer profile
  * @param {Object} updates an object containing profile properties to update
  * @see {@link http://developers.talon.one/integration-api/reference/#updateCustomerProfile}
  */
 IntegrationClient.prototype.updateCustomerProfile = function (customerId, updates, callback) {
-  return this.request('PUT', '/v1/customer_profiles/' + customerId, updates, callback)
+  return this.request('PUT', API_CUSTOMER_PROFILES_PATH + customerId, updates, effectsCallback(this, callback))
 }
 
 /**
  * Track a custom event
  *
- * @param {string} sessionId The integration ID of the customer
- * @param {Object} updates an object containing profile properties to update
+ * @param {string} sessionId:       The integration ID of the customer session for this event
+ * @param {string|null} customerId: An optional integration ID of the customer profile for this event
+ * @param {string} eventType:       A string representing the event. Must not be a reserved event name
+ * @param {Object} eventData:       Arbitrary data asspcoated wotj tjos evemt
  * @see {@link http://developers.talon.one/integration-api/reference/#trackEvent}
  */
-IntegrationClient.prototype.trackEvent = function (sessionId, eventType, eventData, callback) {
-  return this.request('POST', '/v1/events', {sessionId: sessionId, type: eventType, value: eventData}, callback)
+IntegrationClient.prototype.trackEvent = function (sessionId, customerId, eventType, eventData, callback) {
+  return this.request('POST', API_EVENTS_PATH,
+    {sessionId: sessionId, profileId: customerId, type: eventType, attributes: eventData}, effectsCallback(this, callback))
+}
+
+/**
+ * Create a referral code
+ *
+ * @param {number} campaignId:  ID of the Campaign for which the referral code is being created
+ * @param {string} advocateId:  The profile integration ID of the referral's advocate
+ * @param {Object} options:     Specify optional parameters for the referral creation:
+ *                                - friendId: A profile integration ID of the friend being referred
+ *                                - start: A string with an RFC3339 timestamp to set a start date for validation
+ *                                - end: A string with an RFC3339 timestamp to set an end date for validation
+ * @see {@link http://developers.talon.one/integration-api/reference/#createReferral}
+ */
+IntegrationClient.prototype.createReferral = function (campaignId, advocateId, options, callback) {
+  var newReferral = {
+    campaignId: campaignId,
+    advocateProfileIntegrationId: advocateId,
+  }
+  if (options) {
+    newReferral.friendProfileIntegrationId = options.friendId
+    newReferral.startDate = options.start
+    newReferral.expiryDate = options.end
+  }
+
+  return this.request('POST', API_REFERRALS_PATH, newReferral, callback)
+}
+
+/**
+ * Get a list of the customers that match a specific set of attributes
+ *
+ * @param {Object} customerAttr: Attributes that have to be matched by the customers returned
+ *
+ * @see {@link http://developers.talon.one/integration-api/reference/#customersByAttributes}
+ */
+IntegrationClient.prototype.customersByAttributes = function (customerAttr, callback) {
+  return this.request('POST', API_CUSTOMER_PROFILES_SEARCH_PATH, { attributes: customerAttr }, callback)
 }
 
 IntegrationClient.prototype.request = function (method, path, payload, callback) {
@@ -143,7 +194,7 @@ IntegrationClient.prototype.request = function (method, path, payload, callback)
         callback(new Error('Received non-JSON response: ' + buff))
       }
       if (res.statusCode >= 200 && res.statusCode < 300) {
-        handleEffects(self, data, callback)
+        callback(null, data)
       } else {
         var err = new Error(data.message)
         err.statusCode = res.statusCode
