@@ -41,7 +41,7 @@ function handleEffects (client, response, callback) {
       var call = effect[3]
       var effectName = call[0]
       var handler
-      if ((handler = client._effectHandlers[effectName])) {
+      if ((handler = globalEffectHandlers[effectName])) {
         var effectArgs = call.slice(1)
         effectArgs.unshift(client.context)
         handler.apply(null, effectArgs)
