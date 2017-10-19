@@ -7,39 +7,50 @@ var TalonOne = require('talon-one')
 
 var applicationId = 15025
 var applicationKey = '41d3f05e76fd667b'
-
 var client = new TalonOne.IntegrationClient('https://mycompany.talon.one', applicationId, applicationKey)
 
+var sessionId = 'some-identifier-for-this-session'
 var customerId = 'id-used-by-my-company'
 
+
 client.updateCustomerProfile(customerId, {
-  // only include properties you want to update, null values are ignored
-  name: 'Val Kust',
+  attributes: {
+    // only include properties you want to update, null values are ignored
+    Name: 'Val Kust',
+  }
 }, function (err, integrationState) {
-  console.log(integrationState.profile)
-  console.log(integrationState.event)
+  console.log(integrationState) // session, profile, event information
 })
 
-var sessionId = 'some-identifier-for-this-session'
 
-client.updateCustomerSession(customerId, {
+
+client.updateCustomerSession(sessionId, {
   // associate this session with the profile we created above
-  profileId: profileId,
-  // set the currency being used in this session
-  currency: 'USD',
+  profileId: customerId,
+  // set referral ID for this session
+  referral: 'somereferral-identifier',
 }, function (err, integrationState) {
-  console.log(integrationState.profile)
-  console.log(integrationState.session)
-  console.log(integrationState.event)
+
+  if (err){
+    console.log(err)
+  } else {
+    console.log(integrationState.profile)
+    console.log(integrationState.session)
+    console.log(integrationState.event)
+  }
 })
 
-client.trackEvent(sessionId, 'mycompany-reached-goal', {
-  goalId: 1234,
-  goalName: 'Tweeted about My Company',
+// sessionId, customerId, eventType, eventData, callback
+client.trackEvent(sessionId, customerId, 'bought_upgrade', {
+  type: "premium"
 }, function (err, integrationState) {
-  console.log(integrationState.profile)
-  console.log(integrationState.session)
-  console.log(integrationState.event)
+  if (err) {
+    console.log(err)
+  } else {
+    console.log(integrationState.profile)
+    console.log(integrationState.session)
+    console.log(integrationState.event)
+  }
 })
 ```
 
@@ -60,7 +71,7 @@ client.trackEvent(sessionId, 'mycompany-reached-goal', {
 <a name="module_talon-one/integration.Client"></a>
 
 ### talon-one/integration.Client
-**Kind**: static class of <code>[talon-one/integration](#module_talon-one/integration)</code>  
+**Kind**: static class of <code>[talon-one/integration](#module_talon-one/integration)</code>
 
 * [.Client](#module_talon-one/integration.Client)
     * [new IntegrationClient(baseUrl, applicationId, applicationKey, context)](#new_module_talon-one/integration.Client_new)
@@ -86,8 +97,8 @@ Create an HTTP client that will handle signing requests for the integration API
 #### client.updateCustomerSession(sessionId, updates)
 Update/create a customer session.
 
-**Kind**: instance method of <code>[Client](#module_talon-one/integration.Client)</code>  
-**See**: [http://developers.talon.one/integration-api/reference/#updateCustomerSession](http://developers.talon.one/integration-api/reference/#updateCustomerSession)  
+**Kind**: instance method of <code>[Client](#module_talon-one/integration.Client)</code>
+**See**: [http://developers.talon.one/integration-api/reference/#updateCustomerSession](http://developers.talon.one/integration-api/reference/#updateCustomerSession)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -99,8 +110,8 @@ Update/create a customer session.
 #### client.updateCustomerProfile(customerId, updates)
 Update/create a customer profile
 
-**Kind**: instance method of <code>[Client](#module_talon-one/integration.Client)</code>  
-**See**: [http://developers.talon.one/integration-api/reference/#updateCustomerProfile](http://developers.talon.one/integration-api/reference/#updateCustomerProfile)  
+**Kind**: instance method of <code>[Client](#module_talon-one/integration.Client)</code>
+**See**: [http://developers.talon.one/integration-api/reference/#updateCustomerProfile](http://developers.talon.one/integration-api/reference/#updateCustomerProfile)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -109,16 +120,18 @@ Update/create a customer profile
 
 <a name="module_talon-one/integration.Client+trackEvent"></a>
 
-#### client.trackEvent(sessionId, updates)
+#### client.trackEvent(sessionId, customerId, eventType, eventData)
 Track a custom event
 
-**Kind**: instance method of <code>[Client](#module_talon-one/integration.Client)</code>  
-**See**: [http://developers.talon.one/integration-api/reference/#trackEvent](http://developers.talon.one/integration-api/reference/#trackEvent)  
+**Kind**: instance method of <code>[Client](#module_talon-one/integration.Client)</code>
+**See**: [http://developers.talon.one/integration-api/reference/#trackEvent](http://developers.talon.one/integration-api/reference/#trackEvent)
 
 | Param | Type | Description |
 | --- | --- | --- |
 | sessionId | <code>string</code> | The integration ID of the customer |
-| updates | <code>Object</code> | an object containing profile properties to update |
+| customerId | <code>string</code> | The integration ID of the customer |
+| eventType | <code>string</code> | Event type name |
+| eventData | <code>Object</code> | an object containing event data to update |
 
 <a name="module_talon-one/integration.handleEffect"></a>
 
@@ -129,8 +142,8 @@ matching effect is returned by the API, with it's first argument being the
 handling effects to see which handlers should be registered and what their
 remaining arguments will be.
 
-**Kind**: static method of <code>[talon-one/integration](#module_talon-one/integration)</code>  
-**See**: [http://developers.talon.one/integration-api/handling-effects/](http://developers.talon.one/integration-api/handling-effects/)  
+**Kind**: static method of <code>[talon-one/integration](#module_talon-one/integration)</code>
+**See**: [http://developers.talon.one/integration-api/handling-effects/](http://developers.talon.one/integration-api/handling-effects/)
 
 | Param | Type | Description |
 | --- | --- | --- |
