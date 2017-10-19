@@ -197,6 +197,7 @@ IntegrationClient.prototype.request = function (method, path, payload, callback)
         callback(null, data)
       } else {
         var err = new Error(data.message)
+        err.errors = data.errors || [];
         err.statusCode = res.statusCode
         callback(err)
       }
