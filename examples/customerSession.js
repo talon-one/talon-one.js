@@ -76,7 +76,7 @@ client.updateCustomerSession(sessionId, {
   // associate this session with the profile we created above
   profileId: customerId,
   // set a coupon code for this session
-  referral: 'somecoupon-identifier'
+  coupon: 'somecoupon-identifier'
 }, function (err, integrationState) {
   if (err){
     console.log(err)
