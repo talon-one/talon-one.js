@@ -19,9 +19,14 @@ client.updateCustomerProfile(customerId, {
     Name: 'Val Kust',
   }
 }, function (err, integrationState) {
-  console.log(integrationState) // session, profile, event information
+  if (err) {
+    console.log(err)
+  } else {
+    console.log(integrationState.profile)
+    console.log(integrationState.session)
+    console.log(integrationState.event)
+  }
 })
-
 
 
 client.updateCustomerSession(sessionId, {
@@ -40,6 +45,7 @@ client.updateCustomerSession(sessionId, {
   }
 })
 
+
 // sessionId, customerId, eventType, eventData, callback
 client.trackEvent(sessionId, customerId, 'bought_upgrade', {
   type: "premium"
@@ -50,6 +56,27 @@ client.trackEvent(sessionId, customerId, 'bought_upgrade', {
     console.log(integrationState.profile)
     console.log(integrationState.session)
     console.log(integrationState.event)
+  }
+})
+
+
+// campaignId, customerId, options
+client.createReferral(campaignId, customerId, {
+  friendId: 'some-friend-id', // friendId - optional
+  start: '2014-07-07T00:00:00Z', // start date of eligibility - optional
+  end: '2014-07-14T00:00:00Z' // expiry date of eligibility - optional
+}, function (err, integrationState) {
+  if (err) {
+    console.log(err)
+  } else {
+    console.log(integrationState.campaignId)
+    console.log(integrationState.advocateProfileIntegrationId)
+    console.log(integrationState.code)
+    /*
+    console.log(integrationState.friendProfileIntegrationId) // (if supplied)
+    console.log(integrationState.startDate) // (if supplied)
+    console.log(integrationState.expiryDate) // (if supplied)
+    */
   }
 })
 ```
@@ -66,6 +93,7 @@ client.trackEvent(sessionId, customerId, 'bought_upgrade', {
         * [.updateCustomerSession(sessionId, updates)](#module_talon-one/integration.Client+updateCustomerSession)
         * [.updateCustomerProfile(customerId, updates)](#module_talon-one/integration.Client+updateCustomerProfile)
         * [.trackEvent(sessionId, updates)](#module_talon-one/integration.Client+trackEvent)
+        * [.createReferral(campaignId, customerId, options)](#module_talon-one/integration.Client+createReferral)
     * [.handleEffect(effectName, handler)](#module_talon-one/integration.handleEffect)
 
 <a name="module_talon-one/integration.Client"></a>
@@ -78,6 +106,7 @@ client.trackEvent(sessionId, customerId, 'bought_upgrade', {
     * [.updateCustomerSession(sessionId, updates)](#module_talon-one/integration.Client+updateCustomerSession)
     * [.updateCustomerProfile(customerId, updates)](#module_talon-one/integration.Client+updateCustomerProfile)
     * [.trackEvent(sessionId, updates)](#module_talon-one/integration.Client+trackEvent)
+    * [.createReferral(campaignId, customerId, options)](#module_talon-one/integration.Client+createReferral)
 
 <a name="new_module_talon-one/integration.Client_new"></a>
 
@@ -132,6 +161,20 @@ Track a custom event
 | customerId | <code>string</code> | The integration ID of the customer |
 | eventType | <code>string</code> | Event type name |
 | eventData | <code>Object</code> | an object containing event data to update |
+
+<a name="module_talon-one/integration.Client+createReferral"></a>
+
+#### client.createReferral(campaignId, customerId, options)
+Create a referral code
+
+**Kind**: instance method of <code>[Client](#module_talon-one/integration.Client)</code>
+**See**: [http://developers.talon.one/integration-api/reference/#createReferral](http://developers.talon.one/integration-api/reference/#createReferral)
+
+| Param | Type | Description |
+| --- | --- | --- |
+| campaignId | <code>number</code> | The ID of the campaign that the referral code belongs to |
+| customerId | <code>string</code> | The integration ID of the customer |
+| options | <code>Object</code> &#124; <code>null</code> | an optional object containing referral's friend ID, start and expiry dates |
 
 <a name="module_talon-one/integration.handleEffect"></a>
 

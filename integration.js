@@ -109,7 +109,7 @@ IntegrationClient.prototype.updateCustomerProfile = function (customerId, update
  * @param {string} sessionId:       The integration ID of the customer session for this event
  * @param {string|null} customerId: An optional integration ID of the customer profile for this event
  * @param {string} eventType:       A string representing the event. Must not be a reserved event name
- * @param {Object} eventData:       Arbitrary data asspcoated wotj tjos evemt
+ * @param {Object} eventData:       Arbitrary data associated with this event
  * @see {@link http://developers.talon.one/integration-api/reference/#trackEvent}
  */
 IntegrationClient.prototype.trackEvent = function (sessionId, customerId, eventType, eventData, callback) {
@@ -120,12 +120,12 @@ IntegrationClient.prototype.trackEvent = function (sessionId, customerId, eventT
 /**
  * Create a referral code
  *
- * @param {number} campaignId:  ID of the Campaign for which the referral code is being created
- * @param {string} advocateId:  The profile integration ID of the referral's advocate
- * @param {Object} options:     Specify optional parameters for the referral creation:
- *                                - friendId: A profile integration ID of the friend being referred
- *                                - start: A string with an RFC3339 timestamp to set a start date for validation
- *                                - end: A string with an RFC3339 timestamp to set an end date for validation
+ * @param {number} campaignId:    ID of the Campaign for which the referral code is being created
+ * @param {string} advocateId:    The profile integration ID of the referral's advocate
+ * @param {Object|null} options:  Specify optional parameters for the referral creation:
+ *                                  - friendId: A profile integration ID of the friend being referred
+ *                                  - start: A string with an RFC3339 timestamp to set a start date for validation
+ *                                  - end: A string with an RFC3339 timestamp to set an end date for validation
  * @see {@link http://developers.talon.one/integration-api/reference/#createReferral}
  */
 IntegrationClient.prototype.createReferral = function (campaignId, advocateId, options, callback) {
