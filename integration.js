@@ -77,7 +77,7 @@ function IntegrationClient (baseUrl, applicationId, applicationKey, context) {
   this.defaults = url.parse(baseUrl)
   this.defaults.pathname = this.defaults.pathname.replace(/\/$/, '')
   this.applicationId = applicationId
-  this.hmacKey = new Buffer(applicationKey, 'hex')
+  this.hmacKey = Buffer.from(applicationKey, 'hex')
   this.context = context || {}
 }
 
@@ -163,7 +163,7 @@ IntegrationClient.prototype.request = function (method, path, payload, callback)
   })
 
   if (payload) {
-    var buff = new Buffer(JSON.stringify(payload))
+    var buff = Buffer.from(JSON.stringify(payload))
     var hmac = crypto.createHmac('md5', this.hmacKey);
     hmac.write(buff);
     hmac.end()
