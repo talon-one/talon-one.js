@@ -1,3 +1,5 @@
+# THIS SDK IS NOT BEING MAINTAINED. REFER TO https://github.com/talon-one/talon_one.js
+
 # talon-one - client for Talon.One Integration API
 
 ## Synopsis
